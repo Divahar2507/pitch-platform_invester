@@ -6,7 +6,7 @@ import os
 # Default to a local postgres connection if not set
 # Users can update this in their environment variables
 # Note: Password 'Diva@2004' is encoded as 'Diva%402004' to handle the '@' symbol
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:Diva%402004@localhost:5432/pitch_platform")
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:Magi%401724@localhost:5432/pitch_platform")
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

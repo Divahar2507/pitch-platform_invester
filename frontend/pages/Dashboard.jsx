@@ -95,14 +95,13 @@ const Dashboard = () => {
                     <p className="text-slate-500 mt-1">Here is your investment overview for {new Date().toLocaleDateString()}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button
-                        onClick={generateInsight}
-                        disabled={loadingInsight}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-indigo-50 border border-indigo-100 rounded-xl text-sm font-semibold text-indigo-700 hover:bg-indigo-100 shadow-sm transition-all"
+                    <Link
+                        to="/export-reports"
+                        className="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 shadow-sm transition-all"
                     >
-                        {loadingInsight ? <Loader2 className="animate-spin" size={18} /> : <Sparkles size={18} />}
-                        AI Market Insight
-                    </button>
+                        <Download size={18} />
+                        Export Report
+                    </Link>
                     <div className="relative group">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={18} />
                         <input

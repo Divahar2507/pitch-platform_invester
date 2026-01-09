@@ -9,7 +9,7 @@ def create_database():
         conn = psycopg2.connect(
             dbname="postgres", 
             user="postgres", 
-            password="Diva@2004", 
+            password="Magi@1724", 
             host="localhost"
         )
         conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)

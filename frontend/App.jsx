@@ -12,6 +12,8 @@ import Register from './pages/Register';
 // Placeholder for missing components to ensure build works
 import Settings from './pages/Settings';
 import LogInvestment from './pages/LogInvestment';
+import ExportReports from './pages/ExportReports';
+
 // const SettingsPage = () => <div className="p-8 text-2xl font-bold">Settings Page (Coming Soon)</div>; // Removed placeholder
 const PitchDeckViewPage = () => <div className="p-8 text-2xl font-bold">Pitch Deck Detail View (Coming Soon)</div>;
 
@@ -47,6 +49,7 @@ const App = () => {
                     <Route path="/messages" element={<Messages />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/log-investment" element={<LogInvestment />} />
+                    <Route path="/export-reports" element={<ExportReports />} />
                     <Route path="/pitch/:id" element={<PitchDeckViewPage />} />
                 </Route>
             </Routes>
