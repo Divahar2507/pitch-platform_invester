@@ -70,12 +70,41 @@ On the first run, the application will automatically populate the database with:
 
 ## 📡 API Endpoints Overview
 
-- **Auth**: `/auth/register`, `/auth/login`
-- **Startup**: `/startup/profile`, `/startup/profile/{id}`
-- **Investor**: `/investors`, `/investors/{id}`
-- **Pitches**: `/pitches` (Create), `/pitches/upload` (Upload PDF), `/pitches/my`
-- **Matching**: `/matches/startup/{startup_id}`
-- **Messaging**: `/messages/send`, `/messages/{user_id}`
+### **1. Authentication (`/auth`)**
+*   **`POST /auth/register`**: Register a new user (Startup or Investor).
+*   **`POST /auth/login`**: Login to receive an access token.
+*   **`GET /auth/me`**: Get details of the currently logged-in user.
+
+### **2. Startup (`/startup`)**
+*   **`POST /startup/profile`**: Create a startup profile.
+*   **`GET /startup/profile/{id}`**: View a specific startup profile.
+
+### **3. Investor (`/investors`)**
+*   **`POST /investors/profile`**: Create an investor profile.
+*   **`GET /investors/`**: List all investors.
+*   **`GET /investors/{id}`**: View a specific investor.
+
+### **4. Pitch (`/pitches`)**
+*   **`POST /pitches/upload`**: Upload a pitch deck (PDF, PPT).
+*   **`POST /pitches/`**: Create a new pitch entry.
+*   **`GET /pitches/my`**: View your created pitches (Startup only).
+*   **`GET /pitches/feed`**: Pitch Feed for investors (supports filtering).
+
+### **5. Matches (`/matches`)**
+*   **`GET /matches/startup/{startup_id}`**: View potential investor matches for your startup.
+
+### **6. Messaging (`/messages`)**
+*   **`POST /messages/send`**: Send a message.
+*   **`GET /messages/{user_id}`**: View message history with a specific user.
+
+### **7. Notifications (`/notifications`)**
+*   **`GET /notifications/`**: View all notifications.
+*   **`PUT /notifications/{id}/read`**: Mark a notification as read.
+*   **`POST /notifications/debug/create`**: (Debug) Manually create a notification.
+
+### **8. Check Images (`/check-images`)**
+*   **`GET /check-images/`**: List all images in the `images_check_api` folder.
+*   **`GET /check-images/{filename}`**: View a specific image.
 
 ## 📝 Notes
 

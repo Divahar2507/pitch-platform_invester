@@ -15,6 +15,7 @@ class User(Base):
     investor_profile = relationship("InvestorProfile", back_populates="user", uselist=False)
     sent_messages = relationship("Message", back_populates="sender", foreign_keys="Message.sender_id")
     received_messages = relationship("Message", back_populates="receiver", foreign_keys="Message.receiver_id")
+    notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
 
 class StartupProfile(Base):
     __tablename__ = "startup_profiles"
@@ -26,6 +27,16 @@ class StartupProfile(Base):
     vision = Column(Text)
     problem = Column(Text)
     solution = Column(Text)
+    
+    # New fields from CSV
+    description = Column(Text)
+    city = Column(String)
+    state = Column(String)
+    pincode = Column(String)
+    contact_address = Column(Text)
+    mobile = Column(String)
+    email_verified = Column(Boolean, default=False)
+    mobile_verified = Column(Boolean, default=False)
     
     user = relationship("User", back_populates="startup_profile")
     pitches = relationship("Pitch", back_populates="startup")
@@ -41,6 +52,7 @@ class InvestorProfile(Base):
     
     user = relationship("User", back_populates="investor_profile")
     matches = relationship("Match", back_populates="investor")
+    investments = relationship("Investment", back_populates="investor")
 
 class Pitch(Base):
     __tablename__ = "pitches"
@@ -49,7 +61,7 @@ class Pitch(Base):
     title = Column(String, nullable=False)
     description = Column(Text)
     pitch_file_url = Column(String)
-    status = Column(String, default="draft") # draft / shared / under_review
+    status = Column(String, default="draft") # draft / shared / under_review / funded / declined
     raising_amount = Column(String) # e.g. "$2M"
     equity_percentage = Column(String) # e.g. "10%"
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -76,3 +88,29 @@ class Message(Base):
     
     sender = relationship("User", back_populates="sent_messages", foreign_keys=[sender_id])
     receiver = relationship("User", back_populates="received_messages", foreign_keys=[receiver_id])
+
+class Notification(Base):
+    __tablename__ = "notifications"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    type = Column(String, nullable=False) # 'view', 'message', 'match', 'system'
+    title = Column(String, nullable=False)
+    description = Column(String)
+    related_id = Column(Integer, nullable=True) # ID of related entity (e.g., pitch_id)
+    is_read = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    user = relationship("User", back_populates="notifications")
+
+class Investment(Base):
+    __tablename__ = "investments"
+    id = Column(Integer, primary_key=True, index=True)
+    investor_id = Column(Integer, ForeignKey("investor_profiles.id"), nullable=False)
+    startup_name = Column(String, nullable=False)
+    amount = Column(Float, nullable=False)
+    date = Column(DateTime)
+    round = Column(String)
+    notes = Column(Text)
+    status = Column(String, default="Active") # Active, Exited, Needs Attention
+    
+    investor = relationship("InvestorProfile", back_populates="investments")

@@ -152,6 +152,48 @@ def seed_db():
             else:
                 print(f"Investor {i['firm']} already exists.")
 
+        # --- Create Notifications and Messages ---
+        # Assuming we have at least one startup and one investor
+        startup_user = db.query(User).filter(User.email == "techflow@example.com").first()
+        investor_user = db.query(User).filter(User.email == "investor_jane@example.com").first()
+
+        from app.models.core import Notification, Message
+
+        if startup_user and investor_user:
+            # Notifications for Startup
+            notifs = [
+                {"type": "view", "title": "New Pitch View", "desc": "Skyline Ventures viewed your pitch."},
+                {"type": "match", "title": "New Match Found", "desc": "You matched with Skyline Ventures!"},
+                {"type": "message", "title": "New Message", "desc": "Jane from Skyline sent you a message."},
+                {"type": "system", "title": "Welcome", "desc": "Welcome to the platform!"}
+            ]
+            
+            for n in notifs:
+                # Check if exists
+                exists = db.query(Notification).filter(Notification.user_id == startup_user.id, Notification.title == n["title"]).first()
+                if not exists:
+                    notif = Notification(
+                        user_id=startup_user.id,
+                        type=n["type"],
+                        title=n["title"],
+                        description=n["desc"]
+                    )
+                    db.add(notif)
+            
+            # Messages
+            # Startup -> Investor
+            msg1 = "Hi Jane, thanks for viewing our deck."
+            if not db.query(Message).filter(Message.content == msg1).first():
+                db.add(Message(sender_id=startup_user.id, receiver_id=investor_user.id, content=msg1))
+            
+            # Investor -> Startup
+            msg2 = "Hi, looks interesting. Can we hop on a call?"
+            if not db.query(Message).filter(Message.content == msg2).first():
+                db.add(Message(sender_id=investor_user.id, receiver_id=startup_user.id, content=msg2))
+
+            db.commit()
+            print("Seeded notifications and messages.")
+
         print("Seeding complete!")
 
     except Exception as e:

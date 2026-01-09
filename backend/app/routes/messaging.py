@@ -44,4 +44,25 @@ def get_messages(
         )
     ).order_by(Message.timestamp.desc()).all()
     
-    return messages
+    # Helper to get name
+    def get_name(u):
+        if not u: return "Unknown"
+        if u.role == "startup" and u.startup_profile:
+            return u.startup_profile.company_name
+        elif u.role == "investor" and u.investor_profile:
+            return u.investor_profile.firm_name
+        return u.email
+
+    results = []
+    for msg in messages:
+        results.append(MessageResponse(
+            id=msg.id,
+            sender_id=msg.sender_id,
+            receiver_id=msg.receiver_id,
+            content=msg.content,
+            timestamp=msg.timestamp,
+            sender_name=get_name(msg.sender),
+            receiver_name=get_name(msg.receiver)
+        ))
+        
+    return results

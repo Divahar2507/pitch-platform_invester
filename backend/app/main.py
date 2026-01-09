@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from app.database import engine, Base, SessionLocal
 from app.models.core import User, StartupProfile, InvestorProfile
 from app.utils.security import get_password_hash
-from app.routes import auth, startup, investor, pitch, matching, messaging
+from app.routes import auth, startup, investor, pitch, matching, messaging, notifications, images_check, investment
 import os
 
 # Create tables
@@ -18,8 +18,8 @@ app = FastAPI(
 
 # CORS
 origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 
 app.add_middleware(
@@ -42,6 +42,9 @@ app.include_router(investor.router)
 app.include_router(pitch.router)
 app.include_router(matching.router)
 app.include_router(messaging.router)
+app.include_router(notifications.router)
+app.include_router(images_check.router)
+app.include_router(investment.router)
 
 @app.get("/")
 def read_root():

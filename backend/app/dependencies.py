@@ -8,6 +8,7 @@ from app.utils.security import SECRET_KEY, ALGORITHM
 from app.schemas import TokenData
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="auth/login", auto_error=False)
 
 def get_db():
     db = SessionLocal()
@@ -38,3 +39,19 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
 
 async def get_current_active_user(current_user: User = Depends(get_current_user)):
     return current_user
+
+async def get_current_user_optional(token: str = Depends(oauth2_scheme_optional), db: Session = Depends(get_db)):
+    if not token:
+        return None
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            return None
+        token_data = TokenData(email=email, role=payload.get("role"))
+    except JWTError:
+        return None
+        
+    user = db.query(User).filter(User.email == token_data.email).first()
+    return user
+

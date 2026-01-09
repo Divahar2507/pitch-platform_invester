@@ -37,6 +37,14 @@ class StartupBase(BaseModel):
     vision: Optional[str] = None
     problem: Optional[str] = None
     solution: Optional[str] = None
+    description: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    pincode: Optional[str] = None
+    contact_address: Optional[str] = None
+    mobile: Optional[str] = None
+    email_verified: Optional[bool] = False
+    mobile_verified: Optional[bool] = False
 
 class StartupCreate(StartupBase):
     pass
@@ -114,6 +122,47 @@ class MessageResponse(BaseModel):
     receiver_id: int
     content: str
     timestamp: datetime
+    sender_name: Optional[str] = None
+    receiver_name: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+# Notification
+class NotificationCreate(BaseModel):
+    title: str
+    description: str
+    type: str # 'view', 'message', 'match', 'system'
+    related_id: Optional[int] = None
+
+class NotificationResponse(BaseModel):
+    id: int
+    user_id: int
+    type: str
+    title: str
+    description: Optional[str] = None
+    related_id: Optional[int] = None
+    is_read: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+# Investment
+class InvestmentBase(BaseModel):
+    startup_name: str
+    amount: float
+    date: datetime
+    round: str
+    notes: Optional[str] = None
+    status: Optional[str] = "Active"
+
+class InvestmentCreate(InvestmentBase):
+    pass
+
+class InvestmentResponse(InvestmentBase):
+    id: int
+    investor_id: int
 
     class Config:
         from_attributes = True

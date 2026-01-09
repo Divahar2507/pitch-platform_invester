@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from app.dependencies import get_db, get_current_user
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models.core import User
 from app.schemas import UserCreate, UserLogin, Token, UserResponse
 from app.utils.security import get_password_hash, verify_password, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
-from app.dependencies import get_db
 from datetime import timedelta
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -41,3 +41,7 @@ def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
         data={"sub": user.email, "role": user.role}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.get("/me", response_model=UserResponse)
+def get_current_user_info(current_user: User = Depends(get_current_user)):
+    return current_user

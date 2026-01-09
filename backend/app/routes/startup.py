@@ -25,6 +25,16 @@ def create_startup_profile(
     db.refresh(new_profile)
     return new_profile
 
+@router.get("/profile/me", response_model=StartupResponse)
+def get_my_startup_profile(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    if current_user.role != "startup":
+         raise HTTPException(status_code=403, detail="Not a startup")
+    
+    profile = db.query(StartupProfile).filter(StartupProfile.user_id == current_user.id).first()
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    return profile
+
 @router.get("/profile/{id}", response_model=StartupResponse)
 def get_startup_profile(id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     profile = db.query(StartupProfile).filter(StartupProfile.id == id).first()

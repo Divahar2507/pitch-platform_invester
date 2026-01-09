@@ -26,8 +26,18 @@ def create_investor_profile(
     db.refresh(new_profile)
     return new_profile
 
+@router.get("/me", response_model=InvestorResponse)
+def get_my_investor_profile(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    if current_user.role != "investor":
+         raise HTTPException(status_code=403, detail="Not an investor")
+    
+    profile = db.query(InvestorProfile).filter(InvestorProfile.user_id == current_user.id).first()
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    return profile
+
 @router.get("/", response_model=List[InvestorResponse])
-def get_all_investors(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def get_all_investors(db: Session = Depends(get_db)):
     return db.query(InvestorProfile).all()
 
 @router.get("/{id}", response_model=InvestorResponse)
