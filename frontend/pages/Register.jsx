@@ -5,17 +5,17 @@ import { api } from '../services/api';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 import AuthLayout from '../components/AuthLayout';
 
-const Register: React.FC = () => {
+const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [role, setRole] = useState<'investor' | 'startup'>('investor');
+    const [role, setRole] = useState('investor');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    const handleRegister = async (e: React.FormEvent) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
             setError('Passwords do not match');
@@ -27,7 +27,7 @@ const Register: React.FC = () => {
         try {
             await api.register(email, password, role);
             navigate('/login');
-        } catch (err: any) {
+        } catch (err) {
             setError(err.message || 'Registration failed');
         } finally {
             setLoading(false);

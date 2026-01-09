@@ -5,15 +5,15 @@ import { api } from '../services/api';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
 import AuthLayout from '../components/AuthLayout';
 
-const Login: React.FC = () => {
+const Login = () => {
     const [email, setEmail] = useState('investor@test.com');
     const [password, setPassword] = useState('password');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    const handleLogin = async (e: React.FormEvent) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);

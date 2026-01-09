@@ -2,14 +2,16 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 import { User, Save, Building2, Wallet, Globe, Linkedin, FileText, UserCircle } from 'lucide-react';
+// Add missing Loader2 import since I used it above
+import { Loader2 } from 'lucide-react';
 
-const Settings: React.FC = () => {
-    const [user, setUser] = useState<any>(null);
-    const [profile, setProfile] = useState<any>(null);
+const Settings = () => {
+    const [user, setUser] = useState(null);
+    const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<string | null>(null);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
 
     useEffect(() => {
         fetchData();
@@ -36,7 +38,7 @@ const Settings: React.FC = () => {
         }
     };
 
-    const handleSave = async (e: React.FormEvent) => {
+    const handleSave = async (e) => {
         e.preventDefault();
         setSaving(true);
         setError(null);
@@ -49,15 +51,15 @@ const Settings: React.FC = () => {
                 await api.updateInvestorProfile(profile);
             }
             setSuccess("Profile updated successfully!");
-        } catch (err: any) {
+        } catch (err) {
             setError(err.message || "Failed to update profile");
         } finally {
             setSaving(false);
         }
     };
 
-    const handleChange = (field: string, value: any) => {
-        setProfile((prev: any) => ({ ...prev, [field]: value }));
+    const handleChange = (field, value) => {
+        setProfile((prev) => ({ ...prev, [field]: value }));
     };
 
     if (loading) return <div className="p-8">Loading settings...</div>;
@@ -309,8 +311,5 @@ const Settings: React.FC = () => {
         </div>
     );
 };
-
-// Add missing Loader2 import since I used it above
-import { Loader2 } from 'lucide-react';
 
 export default Settings;

@@ -1,15 +1,7 @@
-
 const API_URL = 'http://127.0.0.1:8000';
 
 export const api = {
     login: async (email, password) => {
-        const formData = new URLSearchParams();
-        // The backend uses a specific schema UserLogin which expects JSON body, NOT OAuth2 PasswordRequestForm.
-        // Wait, let's double check auth.py.
-        // @router.post("/login", response_model=Token)
-        // def login(user_credentials: UserLogin, ...)
-        // UserLogin is a pydantic model, so it expects JSON.
-
         const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -55,7 +47,6 @@ export const api = {
         if (industry && industry !== 'All') url += `&industry=${encodeURIComponent(industry)}`;
         if (stage && stage !== 'All') url += `&stage=${encodeURIComponent(stage)}`;
 
-        // Note: getPitchFeed uses Optional auth, so headers are optional but good to send if we have them.
         const token = localStorage.getItem('token');
         const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
 
@@ -76,7 +67,7 @@ export const api = {
         return response.json();
     },
 
-    createInvestment: async (investmentData: { startup_name: string; amount: number; date: string; round: string; notes?: string; status?: string }) => {
+    createInvestment: async (investmentData) => {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No token found');
 
@@ -97,7 +88,7 @@ export const api = {
     },
 
     // Connection APIs
-    sendConnectionRequest: async (receiverId: number) => {
+    sendConnectionRequest: async (receiverId) => {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No token found');
 
@@ -129,7 +120,7 @@ export const api = {
         return response.json();
     },
 
-    respondToRequest: async (connectionId: number, action: 'accept' | 'reject') => {
+    respondToRequest: async (connectionId, action) => {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No token found');
 
@@ -146,7 +137,7 @@ export const api = {
         return response.json();
     },
 
-    checkConnectionStatus: async (userId: number) => {
+    checkConnectionStatus: async (userId) => {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No token found');
 
@@ -158,7 +149,7 @@ export const api = {
         return response.json();
     },
 
-    updateStartupProfile: async (data: any) => {
+    updateStartupProfile: async (data) => {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No token found');
 
@@ -187,7 +178,7 @@ export const api = {
         return response.json();
     },
 
-    updateInvestorProfile: async (data: any) => {
+    updateInvestorProfile: async (data) => {
         const token = localStorage.getItem('token');
         if (!token) throw new Error('No token found');
 

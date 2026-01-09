@@ -2,12 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { TrendingUp } from 'lucide-react';
 
-interface AuthLayoutProps {
-    children: React.ReactNode;
-    rightContent?: React.ReactNode;
-}
-
-const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
+const AuthLayout = ({ children }) => {
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900">
             {/* Navbar */}

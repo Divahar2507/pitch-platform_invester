@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 import { Loader2, DollarSign, Calendar, Building2, FileText, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
-const LogInvestment: React.FC = () => {
+const LogInvestment = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -19,12 +19,12 @@ const LogInvestment: React.FC = () => {
         status: 'Active'
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
@@ -38,7 +38,7 @@ const LogInvestment: React.FC = () => {
             setTimeout(() => {
                 navigate('/portfolio');
             }, 1500);
-        } catch (err: any) {
+        } catch (err) {
             setError(err.message || 'Failed to log investment');
         } finally {
             setLoading(false);
