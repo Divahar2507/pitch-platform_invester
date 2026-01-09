@@ -17,6 +17,8 @@ class UserResponse(UserBase):
     id: int
     role: str
     created_at: datetime
+    name: Optional[str] = None
+    profile_image: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -45,6 +47,13 @@ class StartupBase(BaseModel):
     mobile: Optional[str] = None
     email_verified: Optional[bool] = False
     mobile_verified: Optional[bool] = False
+    
+    # Personal & Work
+    founder_name: Optional[str] = None
+    founder_bio: Optional[str] = None
+    founder_linkedin: Optional[str] = None
+    resume_url: Optional[str] = None
+    website_url: Optional[str] = None
 
 class StartupCreate(StartupBase):
     pass
@@ -61,6 +70,14 @@ class InvestorBase(BaseModel):
     firm_name: str
     focus_industries: Optional[str] = None
     preferred_stage: str
+    
+    # Personal & Work
+    contact_name: Optional[str] = None
+    bio: Optional[str] = None
+    website_url: Optional[str] = None
+    linkedin_url: Optional[str] = None
+    min_check_size: Optional[float] = None
+    max_check_size: Optional[float] = None
 
 class InvestorCreate(InvestorBase):
     pass
@@ -95,6 +112,8 @@ class PitchResponse(PitchBase):
     industry: Optional[str] = None
     stage: Optional[str] = None
     match_score: Optional[int] = None # For displaying match %
+    startup_user_id: Optional[int] = None # For connection check
+    connection_status: Optional[str] = "not_connected" # Optimized field
 
     class Config:
         from_attributes = True
@@ -166,3 +185,31 @@ class InvestmentResponse(InvestmentBase):
 
     class Config:
         from_attributes = True
+
+# Connection
+class ConnectionCreate(BaseModel):
+    receiver_id: int
+
+class ConnectionRespond(BaseModel):
+    connection_id: int
+    action: str = Field(..., pattern="^(accept|reject)$")
+
+class ConnectionResponse(BaseModel):
+    id: int
+    requester_id: int
+    receiver_id: int
+    status: str
+    created_at: datetime
+    
+    # Enriched details
+    requester_name: Optional[str] = None
+    requester_role: Optional[str] = None
+    receiver_name: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
+
+class ConnectionStatus(BaseModel):
+    status: str # 'not_connected', 'pending', 'accepted', 'rejected'
+    request_sent_by_me: Optional[bool] = False
+    connection_id: Optional[int] = None

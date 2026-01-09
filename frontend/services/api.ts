@@ -74,5 +74,145 @@ export const api = {
 
         if (!response.ok) throw new Error('Failed to fetch investments');
         return response.json();
+    },
+
+    createInvestment: async (investmentData: { startup_name: string; amount: number; date: string; round: string; notes?: string; status?: string }) => {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No token found');
+
+        const response = await fetch(`${API_URL}/investments/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(investmentData)
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Failed to log investment');
+        }
+        return response.json();
+    },
+
+    // Connection APIs
+    sendConnectionRequest: async (receiverId: number) => {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No token found');
+
+        const response = await fetch(`${API_URL}/connections/request`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ receiver_id: receiverId })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Failed to send connection request');
+        }
+        return response.json();
+    },
+
+    getIncomingRequests: async () => {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No token found');
+
+        const response = await fetch(`${API_URL}/connections/requests`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch requests');
+        return response.json();
+    },
+
+    respondToRequest: async (connectionId: number, action: 'accept' | 'reject') => {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No token found');
+
+        const response = await fetch(`${API_URL}/connections/respond`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ connection_id: connectionId, action })
+        });
+
+        if (!response.ok) throw new Error('Failed to respond to request');
+        return response.json();
+    },
+
+    checkConnectionStatus: async (userId: number) => {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No token found');
+
+        const response = await fetch(`${API_URL}/connections/check?user_id=${userId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Failed to check status');
+        return response.json();
+    },
+
+    updateStartupProfile: async (data: any) => {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No token found');
+
+        const response = await fetch(`${API_URL}/startup/profile`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) throw new Error('Failed to update startup profile');
+        return response.json();
+    },
+
+    getMyStartupProfile: async () => {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No token found');
+
+        const response = await fetch(`${API_URL}/startup/profile/me`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch startup profile');
+        return response.json();
+    },
+
+    updateInvestorProfile: async (data: any) => {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No token found');
+
+        const response = await fetch(`${API_URL}/investors/profile`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) throw new Error('Failed to update investor profile');
+        return response.json();
+    },
+
+    getMyInvestorProfile: async () => {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No token found');
+
+        const response = await fetch(`${API_URL}/investors/me`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch investor profile');
+        return response.json();
     }
 };

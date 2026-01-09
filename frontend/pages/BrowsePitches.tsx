@@ -26,6 +26,7 @@ const BrowsePitches: React.FC = () => {
       // Map backend response to frontend Startup type
       const mappedStartups: Startup[] = data.map((pitch: any) => ({
         id: pitch.id.toString(),
+        userId: pitch.startup_user_id,
         name: pitch.company_name || 'Unknown Company',
         sector: pitch.industry || 'Unknown',
         stage: pitch.stage || 'Seed',
@@ -40,11 +41,40 @@ const BrowsePitches: React.FC = () => {
       }));
 
       setStartups(mappedStartups);
+
+      // Fetch connection statuses
+      const startupsWithStatus = await Promise.all(mappedStartups.map(async (s) => {
+        try {
+          const statusData = await api.checkConnectionStatus(s.userId);
+          return { ...s, connectionStatus: statusData.status };
+        } catch (e) {
+          return { ...s, connectionStatus: 'not_connected' };
+        }
+      }));
+      setStartups(startupsWithStatus);
+
     } catch (err) {
       console.error('Failed to fetch pitches:', err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleConnect = async (startup: Startup) => {
+    try {
+      await api.sendConnectionRequest(startup.userId);
+      setStartups(prev => prev.map(s => s.id === startup.id ? { ...s, connectionStatus: 'pending' } : s));
+    } catch (e) {
+      console.error('Connection request failed:', e);
+      // alert("Failed to send request"); // Optional
+    }
+  };
+
+  const handleMessage = (startup: Startup) => {
+    // Navigate to messages or open chat modal
+    console.log("Open chat with", startup.name);
+    // For now just alert or log
+    // navigation.navigate('/messages', { userId: startup.userId })
   };
 
   const runAnalysis = async (startup: Startup) => {
@@ -161,18 +191,40 @@ const BrowsePitches: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="p-4 bg-slate-50 border-t border-slate-100 flex gap-2">
-                <button className="flex-1 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors">
-                  Pitch Deck
-                </button>
-                <button
-                  onClick={() => runAnalysis(startup)}
-                  disabled={analyzingId === startup.id}
-                  className="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
-                >
-                  {analyzingId === startup.id ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={16} />}
-                  Deep Dive
-                </button>
+
+              {/* Connection & Actions Area */}
+              <div className="px-4 pb-4 flex flex-col gap-3">
+                {/* Connection Status Button */}
+                {startup.connectionStatus === 'accepted' ? (
+                  <button onClick={() => handleMessage(startup)} className="w-full py-2 bg-emerald-100 text-emerald-700 rounded-xl text-sm font-bold hover:bg-emerald-200 transition-colors flex items-center justify-center gap-2">
+                    {/* <MessageCircle size={16} /> */}
+                    Message
+                  </button>
+                ) : startup.connectionStatus === 'pending' ? (
+                  <button disabled className="w-full py-2 bg-slate-100 text-slate-400 rounded-xl text-sm font-bold flex items-center justify-center gap-2 cursor-not-allowed">
+                    {/* <Clock size={16} /> */}
+                    Request Sent
+                  </button>
+                ) : (
+                  <button onClick={() => handleConnect(startup)} className="w-full py-2 bg-blue-50 text-blue-600 rounded-xl text-sm font-bold hover:bg-blue-100 transition-colors flex items-center justify-center gap-2">
+                    {/* <UserPlus size={16} /> */}
+                    Connect
+                  </button>
+                )}
+
+                <div className="flex gap-2">
+                  <button className="flex-1 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-colors">
+                    Pitch Deck
+                  </button>
+                  <button
+                    onClick={() => runAnalysis(startup)}
+                    disabled={analyzingId === startup.id}
+                    className="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2"
+                  >
+                    {analyzingId === startup.id ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={16} />}
+                    Deep Dive
+                  </button>
+                </div>
               </div>
             </div>
           ))}

@@ -16,6 +16,20 @@ class User(Base):
     sent_messages = relationship("Message", back_populates="sender", foreign_keys="Message.sender_id")
     received_messages = relationship("Message", back_populates="receiver", foreign_keys="Message.receiver_id")
     notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
+    
+    sent_connections = relationship("Connection", back_populates="requester", foreign_keys="Connection.requester_id")
+    received_connections = relationship("Connection", back_populates="receiver", foreign_keys="Connection.receiver_id")
+
+class Connection(Base):
+    __tablename__ = "connections"
+    id = Column(Integer, primary_key=True, index=True)
+    requester_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    receiver_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    status = Column(String, default="pending") # pending | accepted | rejected
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    requester = relationship("User", foreign_keys=[requester_id], back_populates="sent_connections")
+    receiver = relationship("User", foreign_keys=[receiver_id], back_populates="received_connections")
 
 class StartupProfile(Base):
     __tablename__ = "startup_profiles"
@@ -38,6 +52,13 @@ class StartupProfile(Base):
     email_verified = Column(Boolean, default=False)
     mobile_verified = Column(Boolean, default=False)
     
+    # Personal & Work Details
+    founder_name = Column(String)
+    founder_bio = Column(Text)
+    founder_linkedin = Column(String)
+    resume_url = Column(String)
+    website_url = Column(String)
+    
     user = relationship("User", back_populates="startup_profile")
     pitches = relationship("Pitch", back_populates="startup")
     matches = relationship("Match", back_populates="startup")
@@ -49,6 +70,14 @@ class InvestorProfile(Base):
     firm_name = Column(String, nullable=False)
     focus_industries = Column(String) # Comma-separated or JSON string
     preferred_stage = Column(String, nullable=False)
+    
+    # Personal & Work Details
+    contact_name = Column(String)
+    bio = Column(Text)
+    website_url = Column(String)
+    linkedin_url = Column(String)
+    min_check_size = Column(Float)
+    max_check_size = Column(Float)
     
     user = relationship("User", back_populates="investor_profile")
     matches = relationship("Match", back_populates="investor")

@@ -41,3 +41,25 @@ def get_startup_profile(id: int, db: Session = Depends(get_db), current_user: Us
     if not profile:
         raise HTTPException(status_code=404, detail="Profile not found")
     return profile
+
+@router.put("/profile", response_model=StartupResponse)
+def update_startup_profile(
+    profile_update: StartupCreate, 
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role != "startup":
+        raise HTTPException(status_code=403, detail="Only startups can update their profile")
+        
+    profile = db.query(StartupProfile).filter(StartupProfile.user_id == current_user.id).first()
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+
+    # Update fields
+    update_data = profile_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(profile, key, value)
+        
+    db.commit()
+    db.refresh(profile)
+    return profile

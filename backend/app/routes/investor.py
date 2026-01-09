@@ -46,3 +46,25 @@ def get_investor(id: int, db: Session = Depends(get_db), current_user: User = De
     if not profile:
         raise HTTPException(status_code=404, detail="Profile not found")
     return profile
+
+@router.put("/profile", response_model=InvestorResponse)
+def update_investor_profile(
+    profile_update: InvestorCreate, 
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role != "investor":
+        raise HTTPException(status_code=403, detail="Only investors can update their profile")
+        
+    profile = db.query(InvestorProfile).filter(InvestorProfile.user_id == current_user.id).first()
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+
+    # Update fields
+    update_data = profile_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(profile, key, value)
+        
+    db.commit()
+    db.refresh(profile)
+    return profile

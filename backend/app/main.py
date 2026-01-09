@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from app.database import engine, Base, SessionLocal
 from app.models.core import User, StartupProfile, InvestorProfile
 from app.utils.security import get_password_hash
-from app.routes import auth, startup, investor, pitch, matching, messaging, notifications, images_check, investment
+from app.routes import auth, startup, investor, pitch, matching, messaging, notifications, images_check, investment, connections
 import os
 
 # Create tables
@@ -45,6 +45,7 @@ app.include_router(messaging.router)
 app.include_router(notifications.router)
 app.include_router(images_check.router)
 app.include_router(investment.router)
+app.include_router(connections.router)
 
 @app.get("/")
 def read_root():

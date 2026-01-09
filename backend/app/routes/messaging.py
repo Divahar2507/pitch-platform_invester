@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 from app.dependencies import get_db, get_current_user
-from app.models.core import User, Message
+from app.models.core import User, Message, Connection
 from app.schemas import MessageCreate, MessageResponse
 
 router = APIRouter(prefix="/messages", tags=["Messaging"])
@@ -16,6 +16,17 @@ def send_message(
     receiver = db.query(User).filter(User.id == message.receiver_id).first()
     if not receiver:
         raise HTTPException(status_code=404, detail="Receiver not found")
+        
+    # Strict Connection Check
+    connection = db.query(Connection).filter(
+        or_(
+            and_(Connection.requester_id == current_user.id, Connection.receiver_id == receiver.id),
+            and_(Connection.requester_id == receiver.id, Connection.receiver_id == current_user.id)
+        )
+    ).first()
+    
+    if not connection or connection.status != "accepted":
+        raise HTTPException(status_code=403, detail="You must be connected to send messages")
     
     new_message = Message(
         sender_id=current_user.id,

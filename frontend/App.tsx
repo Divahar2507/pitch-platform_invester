@@ -13,8 +13,9 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 
 // Placeholder for missing components to ensure build works
-const SettingsPage = () => <div className="p-8 text-2xl font-bold">Settings Page (Coming Soon)</div>;
-const LogInvestmentPage = () => <div className="p-8 text-2xl font-bold">Log Investment Page (Coming Soon)</div>;
+import Settings from './pages/Settings';
+import LogInvestment from './pages/LogInvestment';
+// const SettingsPage = () => <div className="p-8 text-2xl font-bold">Settings Page (Coming Soon)</div>; // Removed placeholder
 const PitchDeckViewPage = () => <div className="p-8 text-2xl font-bold">Pitch Deck Detail View (Coming Soon)</div>;
 
 const MainLayout = () => (
@@ -47,8 +48,8 @@ const App: React.FC = () => {
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/in-review" element={<InReview />} />
           <Route path="/messages" element={<Messages />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/log-investment" element={<LogInvestmentPage />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/log-investment" element={<LogInvestment />} />
           <Route path="/pitch/:id" element={<PitchDeckViewPage />} />
         </Route>
       </Routes>

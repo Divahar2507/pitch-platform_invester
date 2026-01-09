@@ -4,6 +4,8 @@ import * as React from 'react';
 
 export interface Startup {
   id: string;
+  userId: number;
+  connectionStatus?: 'not_connected' | 'pending' | 'accepted' | 'rejected' | 'self';
   name: string;
   sector: string;
   stage: string;

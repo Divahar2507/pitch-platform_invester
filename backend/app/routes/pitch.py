@@ -95,11 +95,56 @@ def get_pitch_feed(
     
     # Enrich response
     response_list = []
+    
+    # Pre-fetch connections if user is logged in
+    connections_map = {}
+    if current_user:
+        from app.models.core import Connection
+        from sqlalchemy import or_, and_
+        
+        # Get all connections for this user
+        # This is optimization: fetch all connections where current_user is involved
+        # Then map by other_user_id
+        
+        # Actually, simpler to just query generic connection
+        # Since we are iterating pitches, we want connection status with pitch.startup.user_id
+        
+        # Batch query would be best but let's do loop for simplicity first, or better:
+        # Fetch all connections involving current_user
+        my_connections = db.query(Connection).filter(
+            or_(Connection.requester_id == current_user.id, Connection.receiver_id == current_user.id)
+        ).all()
+        
+        for c in my_connections:
+            other_id = c.receiver_id if c.requester_id == current_user.id else c.requester_id
+            # Determine status. 
+            # If rejected, it's 'rejected'. 
+            # If accepted, 'accepted'.
+            # If pending:
+            #  - checks if I sent it ("request_sent") or received it ("request_received")?
+            #  - For simple status string: 'pending' is enough, frontend handles button state.
+            # But wait, frontend needs to know if "Request Sent" (disabled) or "Accept" (action).
+            # The UI shows "Request Sent" if pending. So 'pending' is fine.
+            # If I am receiver and it is pending, I should see "Accept".
+            # Let's just return 'pending'.
+            connections_map[other_id] = c.status
+
     for pitch in results:
         resp = PitchResponse.model_validate(pitch)
         resp.company_name = pitch.startup.company_name
         resp.industry = pitch.startup.industry
         resp.stage = pitch.startup.funding_stage
+        resp.startup_user_id = pitch.startup.user_id
+        
+        # Set connection status
+        if current_user:
+            if pitch.startup.user_id == current_user.id:
+                resp.connection_status = "self"
+            else:
+                resp.connection_status = connections_map.get(pitch.startup.user_id, "not_connected")
+        else:
+            resp.connection_status = "not_connected"
+
         # Mock match score for now, real implementation would compare with investor preferences
         import random
         resp.match_score = random.randint(60, 99) 

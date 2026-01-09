@@ -24,6 +24,26 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
+
+    # Automatically create empty profile based on role
+    if user.role == "investor":
+        investor_profile = InvestorProfile(
+            user_id=new_user.id,
+            firm_name="My Firm", # Default placeholder
+            preferred_stage="Seed"
+        )
+        db.add(investor_profile)
+    elif user.role == "startup":
+        startup_profile = StartupProfile(
+            user_id=new_user.id,
+            company_name="My Startup", # Default placeholder
+            industry="Technology",
+            funding_stage="Pre-Seed"
+        )
+        db.add(startup_profile)
+    
+    db.commit()
+    
     return new_user
 
 @router.post("/login", response_model=Token)
@@ -44,4 +64,15 @@ def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
 
 @router.get("/me", response_model=UserResponse)
 def get_current_user_info(current_user: User = Depends(get_current_user)):
+    # Enrich user object with profile name
+    if current_user.role == "startup" and current_user.startup_profile:
+        current_user.name = current_user.startup_profile.company_name
+    elif current_user.role == "investor" and current_user.investor_profile:
+        current_user.name = current_user.investor_profile.firm_name
+    else:
+        current_user.name = current_user.email.split('@')[0] # Fallback
+        
+    # Placeholder for profile image logic (could be added to profiles later)
+    # current_user.profile_image = ...
+    
     return current_user
