@@ -1,6 +1,7 @@
 // Use import * as React to ensure JSX intrinsic elements are recognized
 import * as React from 'react';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 // Added TrendingUp to the imports
 import { Search, Plus, Filter, ChevronDown, ExternalLink, MessageCircle, FileText, LayoutGrid, LayoutList, TrendingUp, Loader2 } from 'lucide-react';
 import { api } from '../services/api';
@@ -51,10 +52,10 @@ const Portfolio = () => {
                     <h1 className="text-3xl font-bold text-slate-900">My Portfolio</h1>
                     <p className="text-slate-500 mt-1">Managing 12 active investments across 4 sectors.</p>
                 </div>
-                <button className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 rounded-xl text-sm font-semibold text-white hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all active:scale-95">
+                <Link to="/log-investment" className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 rounded-xl text-sm font-semibold text-white hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all active:scale-95">
                     <Plus size={18} />
                     Add Investment
-                </button>
+                </Link>
             </div>
 
             {/* Grid Summary */}

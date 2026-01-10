@@ -1,7 +1,7 @@
 // Use import * as React to ensure JSX intrinsic elements are recognized
 import * as React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Settings, LogOut } from 'lucide-react';
+import { Settings, LogOut, TrendingUp } from 'lucide-react';
 import { NAV_ITEMS } from '../constants';
 
 const Sidebar = () => {
@@ -33,10 +33,10 @@ const Sidebar = () => {
         <div className="w-64 bg-white border-r border-slate-200 h-screen flex flex-col sticky top-0">
             <div className="p-6">
                 <div className="flex items-center gap-2 mb-8">
-                    <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <div className="w-4 h-4 border-2 border-white rotate-45"></div>
+                    <div className="bg-blue-600 w-8 h-8 rounded-lg flex items-center justify-center shadow-lg shadow-blue-100">
+                        <TrendingUp size={18} className="text-white" />
                     </div>
-                    <span className="text-xl font-bold text-slate-900 tracking-tight">VentureFlow</span>
+                    <span className="text-xl font-black text-slate-900 tracking-tight">StartupPitch</span>
                 </div>
 
                 <nav className="space-y-1">

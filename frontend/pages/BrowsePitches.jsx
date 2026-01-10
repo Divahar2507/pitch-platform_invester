@@ -1,6 +1,7 @@
 
 import * as React from 'react';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Search, Filter, Grid, List, ChevronDown, Star, X, TrendingUp, Sparkles, Loader2 } from 'lucide-react';
 import { api } from '../services/api';
 import { aiService } from '../services/aiService';
@@ -212,9 +213,9 @@ const BrowsePitches = () => {
                                 )}
 
                                 <div className="flex gap-2">
-                                    <button className="flex-1 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-colors">
+                                    <Link to={`/pitch/${startup.id}`} className="flex-1 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-colors text-center">
                                         Pitch Deck
-                                    </button>
+                                    </Link>
                                     <button
                                         onClick={() => runAnalysis(startup)}
                                         disabled={analyzingId === startup.id}
